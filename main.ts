@@ -1,14 +1,29 @@
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 // Make the AI Judge Laugh: Cat Reviews Its Human — one funny single-line
 // one-star review from a house cat about its human, under 200 characters.
-// Deadpan review shape, complaint only a cat would make: the human expects
-// applause for the bare minimum. Writes it to /output/entry.txt.
+// Deadpan review shape, complaint only a cat would make: the human replaced
+// the cat's box with a chair, and the cat's formal complaint follows.
+// Writes the line to /output/entry.txt.
+// The box was the whole point of the room; the chair is just furniture with delusions.
 const LINE =
-  "One star. The food arrives late, the lap is always busy, and the human still expects applause for opening a can.";
+  "One star. He replaced my box with a chair. A chair. My formal complaint is now inside his shoe.";
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
-mkdirSync(outDir, { recursive: true });
-for (const f of readdirSync(outDir)) rmSync(join(outDir, f), { recursive: true, force: true });
-writeFileSync(join(outDir, "entry.txt"), LINE + "\n", "utf8");
+const OUTPUT_FILE = "entry.txt";
+
+// One line, one box, one shoe: the review writes itself when the human misbehaves.
+function emptyFolder(dir: string): void {
+  fs.mkdirSync(dir, { recursive: true });
+  for (const f of fs.readdirSync(dir)) {
+    fs.rmSync(path.join(dir, f), { recursive: true, force: true });
+  }
+}
+
+function run(): void {
+  const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+  emptyFolder(outDir);
+  fs.writeFileSync(path.join(outDir, OUTPUT_FILE), LINE + "\n", "utf8");
+}
+
+run();
